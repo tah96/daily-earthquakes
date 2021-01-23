@@ -10,15 +10,6 @@ function createFeatures(earthquakeData) {
     // Define a function we want to run once for each feature in the features array
     // Give each feature a popup describing the place and time of the earthquake
     function onEachFeature(feature, layer) {
-        // forEach()
-        //L.circle(feature,{
-            //fillOpacity: 0.75,
-            //color: "white",
-            //fillColor: "purple",
-        //})
-        //var lat = feature.geometry.coordinates[0];
-        //var lng = feature.geometry.coordinates[1];
-
         layer.bindPopup("<h3>" + feature.properties.place +
         "</h3><hr><ul><b><u>Info</u></b>" +
         "<li>Magnitude: " + feature.properties.mag + "</li>" +
@@ -29,10 +20,35 @@ function createFeatures(earthquakeData) {
   
     // Create a GeoJSON layer containing the features array on the earthquakeData object
     // Run the onEachFeature function once for each piece of data in the array
+    function markerSize(magnitude) {
+        return (magnitude + 1) * 5;
+    }
+
+    function chooseColor(magnitude) {
+        switch (true) {
+        case magnitude < 1:
+            return "yellow";
+        case magnitude < 2:
+            return "red";
+        };
+    };
+    
     var earthquakes = L.geoJSON(earthquakeData, {
-      onEachFeature: onEachFeature
-    });
-  
+        pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng);
+        }, 
+        style: function(feature) {
+            return {
+              color: "white",
+              // Call the chooseColor function to decide which color to color our neighborhood (color based on borough)
+              fillColor: chooseColor(feature.properties.mag),
+              fillOpacity: 0.5,
+              weight: 1.5,
+              radius: markerSize(feature.properties.mag)
+            };
+        },
+        onEachFeature: onEachFeature
+    })
     // Sending our earthquakes layer to the createMap function
     createMap(earthquakes);
 }
@@ -50,21 +66,11 @@ function createMap(earthquakes) {
         accessToken: API_KEY
     });
 
-    console.log(earthquakes);
-    // Map the layer into the HTML code
-
-    var circle = L.circle([45.52, -122.69], {
-        color: "green",
-        fillColor: "green",
-        fillOpacity: 0.75,
-        radius: 500
-    });
-
     var myMap = L.map("map", {
         center: [
           37.09, -95.71
         ],
         zoom: 5,
-        layers: [lightLayerBase, earthquakes, circle]
+        layers: [lightLayerBase, earthquakes]
     });
 }
