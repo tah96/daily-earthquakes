@@ -11,14 +11,20 @@ function createFeatures(earthquakeData) {
     // Give each feature a popup describing the place and time of the earthquake
     function onEachFeature(feature, layer) {
         // forEach()
-        L.circle()
-        
+        //L.circle(feature,{
+            //fillOpacity: 0.75,
+            //color: "white",
+            //fillColor: "purple",
+        //})
+        //var lat = feature.geometry.coordinates[0];
+        //var lng = feature.geometry.coordinates[1];
+
         layer.bindPopup("<h3>" + feature.properties.place +
         "</h3><hr><ul><b><u>Info</u></b>" +
         "<li>Magnitude: " + feature.properties.mag + "</li>" +
         "<li>Type: " + feature.properties.magType + "</li>" +
-        "<li>Occurance Date/Time: " + new Date(feature.properties.time) + "</li>") +
-        "</ul>";
+        "<li>Occurance Date/Time: " + new Date(feature.properties.time) + "</li>" +
+        "</ul>");
     }
   
     // Create a GeoJSON layer containing the features array on the earthquakeData object
@@ -34,7 +40,8 @@ function createFeatures(earthquakeData) {
 function createMap(earthquakes) {
 
     // Define LightMap layer
-    var lightmapBase = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+    
+    var lightLayerBase = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
         attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
         tileSize: 512,
         maxZoom: 18,
@@ -43,23 +50,21 @@ function createMap(earthquakes) {
         accessToken: API_KEY
     });
 
-
-    L.circle(earthquakes, {
-        fillOpacity: 0.75,
-        color: "white",
-        fillColor: "purple",
-        radius: 3
-    });
-    
     console.log(earthquakes);
-
     // Map the layer into the HTML code
+
+    var circle = L.circle([45.52, -122.69], {
+        color: "green",
+        fillColor: "green",
+        fillOpacity: 0.75,
+        radius: 500
+    });
 
     var myMap = L.map("map", {
         center: [
           37.09, -95.71
         ],
         zoom: 5,
-        layers: [lightmapBase, earthquakes]
+        layers: [lightLayerBase, earthquakes, circle]
     });
 }
