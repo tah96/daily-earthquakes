@@ -10,7 +10,10 @@ function createFeatures(earthquakeData) {
     // Define a function we want to run once for each feature in the features array
     // Give each feature a popup describing the place and time of the earthquake
     function onEachFeature(feature, layer) {
-      layer.bindPopup("<h3>" + feature.properties.place +
+        // forEach()
+        L.circle()
+        
+        layer.bindPopup("<h3>" + feature.properties.place +
         "</h3><hr><ul><b><u>Info</u></b>" +
         "<li>Magnitude: " + feature.properties.mag + "</li>" +
         "<li>Type: " + feature.properties.magType + "</li>" +
@@ -40,10 +43,15 @@ function createMap(earthquakes) {
         accessToken: API_KEY
     });
 
-    //
-    var overlayMaps = {
-        Earthquakes: earthquakes
-    };
+
+    L.circle(earthquakes, {
+        fillOpacity: 0.75,
+        color: "white",
+        fillColor: "purple",
+        radius: 3
+    });
+    
+    console.log(earthquakes);
 
     // Map the layer into the HTML code
 
