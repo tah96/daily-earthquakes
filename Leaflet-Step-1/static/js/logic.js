@@ -17,11 +17,6 @@ function createFeatures(earthquakeData) {
         "<li>Occurance Date/Time: " + new Date(feature.properties.time) + "</li>" +
         "</ul>");
     };
-
-    // Set up the legend
-
-    // Adding legend to the map
-    //legend.addTo(myMap);
   
     // Create a GeoJSON layer containing the features array on the earthquakeData object
     // Run the onEachFeature function once for each piece of data in the array
@@ -87,24 +82,12 @@ function createMap(earthquakes) {
 
     var legend = L.control({ position: "bottomright" });
     legend.onAdd = function() {
-        // var div = L.DomUtil.create('div', "legend"),
-        // mag = ["0-1", "1-2", "2-3", "3-4", "4+"]
-        // colors = ["#2AAD27","#FFD326", "#CAC428", "#CB8427", "#CB2B3E"];
-        // for (var i = 0; i < mag.length; i++) {
-        //     div.innerHTML += '<i style="background:' + colors[i] + '"></i> ' + mag[i] + '<br>'
-        // };
-        // return div;
         var div = L.DomUtil.create("div", "legend");
         var limits = ["<1", "1-2", "2-3", "3-4", "4+"]
         var colors = ["#2AAD27","#FFD326", "#CAC428", "#CB8427", "#CB2B3E"];
         var labels = [];
 
-        // Add min & max
-        var legendInfo = "<h1>Magnitude</h1>"; //+
-        // "<div class=\"labels\">" +
-        //     "<div class=\"min\">" + limits[0] + "</div>" +
-        //     "<div class=\"max\">" + limits[limits.length - 1] + "</div>" +
-        // "</div>";
+        var legendInfo = "<h1>Magnitude</h1>"; 
 
         div.innerHTML = legendInfo;
 
