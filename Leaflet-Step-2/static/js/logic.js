@@ -2,14 +2,22 @@ var queryURL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_da
 
 d3.json(queryURL, function (data) {
     console.log(data);
-    createFeatures(data.features)
+    createFeaturesEq(data.features)
 });
 
-function createFeatures(earthquakeData) {
+var file = "static/js/PB2002_boundaries.json"
+d3.json(file, function (data2) {
+    console.log(data2)
+    createFeaturesPlates(data2.features)
+});
+
+parameters = []
+
+function createFeaturesEq(earthquakeData) {
 
     // Define a function we want to run once for each feature in the features array
     // Give each feature a popup describing the place and time of the earthquake
-    function onEachFeature(feature, layer) {
+    function onEachFeatureEq(feature, layer) {
         layer.bindPopup("<h3>" + feature.properties.place +
         "</h3><hr><ul><b><u>Info</u></b>" +
         "<li>Magnitude: " + feature.properties.mag + "</li>" +
@@ -53,13 +61,40 @@ function createFeatures(earthquakeData) {
               radius: markerSize(feature.properties.mag)
             };
         },
-        onEachFeature: onEachFeature
+        onEachFeature: onEachFeatureEq
     });
     console.log(earthquakes);
-    createMap(earthquakes);
+    parameters.push(earthquakes);
 };
 
-function createMap(earthquakes) {
+function createFeaturesPlates(plateData) {
+    
+    var myStyle = {
+        "color": "Red"
+    };
+    
+    var boundaries = L.geoJSON(plateData, {
+        style: myStyle
+    });
+    
+
+    // var plate_boundaries = []
+    // plateData.forEach(feature => {
+    //     var pl_coordinates = feature.geometry.coordinates
+    //     plate_boundaries.push(pl_coordinates)
+    // });
+    // //console.log(plate_boundaries);
+
+    // var plate_bounds = L.polyline(plate_boundaries, {
+    //     color: 'red'
+    // });
+
+    parameters.push(boundaries);
+};
+
+console.log(parameters);
+
+function createMaps(parameters) {
 
     // Define LightMap layer
     
@@ -72,13 +107,35 @@ function createMap(earthquakes) {
         accessToken: API_KEY
     });
 
+    var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+        attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+        maxZoom: 18,
+        id: "dark-v10",
+        accessToken: API_KEY
+    });
+
+    var baseMaps = {
+        "Day Map": lightLayerBase,
+        "Night Map": darkmap
+    };
+
+    var overlayMaps = {
+        Earthquakes: parameters[0],
+        Plates: parameters[1]
+    };
+
+
     var myMap = L.map("map", {
         center: [
           37.09, -95.71
         ],
         zoom: 5,
-        layers: [lightLayerBase, earthquakes]
+        layers: [lightLayerBase, parameters[0]]
     });
+
+    L.control.layers(baseMaps, overlayMaps, {
+        collapsed: false
+    }).addTo(myMap);
 
     var legend = L.control({ position: "bottomright" });
     legend.onAdd = function() {
@@ -99,4 +156,6 @@ function createMap(earthquakes) {
         return div;
     };
     legend.addTo(myMap);
-}
+};
+
+createMaps(parameters);
