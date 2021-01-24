@@ -21,15 +21,21 @@ function createFeatures(earthquakeData) {
     // Create a GeoJSON layer containing the features array on the earthquakeData object
     // Run the onEachFeature function once for each piece of data in the array
     function markerSize(magnitude) {
-        return (magnitude + 1) * 5;
+        return magnitude * 3;
     }
 
     function chooseColor(magnitude) {
         switch (true) {
         case magnitude < 1:
-            return "yellow";
+            return "#2AAD27";
         case magnitude < 2:
-            return "red";
+            return "#FFD326";
+        case magnitude < 3:
+            return "#CAC428";
+        case magnitude < 4:
+            return "#CB8427";
+        default:
+            return "#CB2B3E"
         };
     };
     
@@ -42,14 +48,14 @@ function createFeatures(earthquakeData) {
               color: "white",
               // Call the chooseColor function to decide which color to color our neighborhood (color based on borough)
               fillColor: chooseColor(feature.properties.mag),
-              fillOpacity: 0.5,
-              weight: 1.5,
+              fillOpacity: 0.75,
+              weight: 0.5,
               radius: markerSize(feature.properties.mag)
             };
         },
         onEachFeature: onEachFeature
     })
-    // Sending our earthquakes layer to the createMap function
+    // Sending our e`arthquakes layer to the createMap function
     createMap(earthquakes);
 }
 
