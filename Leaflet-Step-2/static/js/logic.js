@@ -64,38 +64,35 @@ function createFeaturesEq(earthquakeData) {
         onEachFeature: onEachFeatureEq
     });
     console.log(earthquakes);
-    parameters.push(earthquakes);
+    createMaps(earthquakes);
 };
+
+var plate_boundaries = []
 
 function createFeaturesPlates(plateData) {
     
-    var myStyle = {
-        "color": "Red"
-    };
+    // var myStyle = {
+    //     "color": "Red"
+    // };
     
-    var boundaries = L.geoJSON(plateData, {
-        style: myStyle
+    // var boundaries = L.geoJSON(plateData, {
+    //     style: myStyle
+    // });
+
+    plateData.forEach(feature => {
+        var pl_coordinates = feature.geometry.coordinates
+        plate_boundaries.push(pl_coordinates)
     });
-    
-
-    // var plate_boundaries = []
-    // plateData.forEach(feature => {
-    //     var pl_coordinates = feature.geometry.coordinates
-    //     plate_boundaries.push(pl_coordinates)
-    // });
-    // //console.log(plate_boundaries);
-
-    // var plate_bounds = L.polyline(plate_boundaries, {
-    //     color: 'red'
-    // });
-
-    parameters.push(boundaries);
 };
 
-console.log(parameters);
+console.log(plate_boundaries);
 
-function createMaps(parameters) {
-
+function createMaps(earthquakes) {
+    
+    var plate_bounds = L.polyline(plate_boundaries, {
+        "color": "red"
+    });
+    
     // Define LightMap layer
     
     var lightLayerBase = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
@@ -120,8 +117,8 @@ function createMaps(parameters) {
     };
 
     var overlayMaps = {
-        Earthquakes: parameters[0],
-        Plates: parameters[1]
+        Earthquakes: earthquakes,
+        Plates: plate_bounds
     };
 
 
@@ -130,7 +127,7 @@ function createMaps(parameters) {
           37.09, -95.71
         ],
         zoom: 5,
-        layers: [lightLayerBase, parameters[0]]
+        layers: [lightLayerBase, earthquakes, plate_bounds]
     });
 
     L.control.layers(baseMaps, overlayMaps, {
@@ -156,6 +153,10 @@ function createMaps(parameters) {
         return div;
     };
     legend.addTo(myMap);
-};
 
-createMaps(parameters);
+    // var plate_bounds = L.polyline(plate_boundaries, {
+    //     color: 'red'
+    // });
+
+    plate_bounds.addTo(myMap)
+};
