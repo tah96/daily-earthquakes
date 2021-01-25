@@ -90,7 +90,7 @@ console.log(plate_boundaries);
 function createMaps(earthquakes) {
     
     var plate_bounds = L.polyline(plate_boundaries, {
-        "color": "red"
+        color: "red",
     });
     
     // Define LightMap layer
@@ -126,7 +126,7 @@ function createMaps(earthquakes) {
         center: [
           37.09, -95.71
         ],
-        zoom: 5,
+        zoom: 0,
         layers: [lightLayerBase, earthquakes, plate_bounds]
     });
 
