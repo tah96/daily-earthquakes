@@ -8,7 +8,7 @@ d3.json(queryURL, function (data) {
 var file = "static/js/PB2002_boundaries.json"
 d3.json(file, function (data2) {
     console.log(data2)
-    createFeaturesPlates(data2.features)
+    createFeaturesPlates(data2)
 });
 
 parameters = []
@@ -67,31 +67,35 @@ function createFeaturesEq(earthquakeData) {
     createMaps(earthquakes);
 };
 
-var plate_boundaries = []
+var plate_boundaries = L.layerGroup()
 
 function createFeaturesPlates(plateData) {
     
-    // var myStyle = {
-    //     "color": "Red"
-    // };
-    
-    // var boundaries = L.geoJSON(plateData, {
-    //     style: myStyle
-    // });
+    var new_plates = L.geoJSON(plateData, {
+        // pointToLayer: function (feature, latlng) {
+        // return L.polyline(latlng);
+        // }, 
+        // style: function(feature) {
+        //     return {
+        color: "red",
+        weight: 2,
+        //     };
+        // },
+    }).addTo(plate_boundaries);
 
-    plateData.forEach(feature => {
-        var pl_coordinates = feature.geometry.coordinates
-        plate_boundaries.push(pl_coordinates)
-    });
+    // plateData.forEach(feature => {
+    //     var pl_coordinates = feature.geometry.coordinates
+    //     plate_boundaries.push(pl_coordinates)
+    // });
 };
 
 console.log(plate_boundaries);
 
 function createMaps(earthquakes) {
     
-    var plate_bounds = L.polyline(plate_boundaries, {
-        color: "red",
-    });
+    // var plate_bounds = L.polyline(plate_boundaries, {
+    //     color: "red",
+    // });
     
     // Define LightMap layer
     
@@ -118,7 +122,7 @@ function createMaps(earthquakes) {
 
     var overlayMaps = {
         Earthquakes: earthquakes,
-        Plates: plate_bounds
+        Plates: plate_boundaries
     };
 
 
@@ -126,9 +130,11 @@ function createMaps(earthquakes) {
         center: [
           37.09, -95.71
         ],
-        zoom: 0,
-        layers: [lightLayerBase, earthquakes, plate_bounds]
+        zoom: 5,
+        layers: [lightLayerBase, darkmap]
     });
+
+    plate_boundaries.addTo(myMap)
 
     L.control.layers(baseMaps, overlayMaps, {
         collapsed: false
@@ -153,10 +159,4 @@ function createMaps(earthquakes) {
         return div;
     };
     legend.addTo(myMap);
-
-    // var plate_bounds = L.polyline(plate_boundaries, {
-    //     color: 'red'
-    // });
-
-    plate_bounds.addTo(myMap)
 };
