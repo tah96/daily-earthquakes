@@ -11,7 +11,6 @@ d3.json(file, function (data2) {
     createFeaturesPlates(data2)
 });
 
-parameters = []
 
 function createFeaturesEq(earthquakeData) {
 
@@ -72,31 +71,15 @@ var plate_boundaries = L.layerGroup()
 function createFeaturesPlates(plateData) {
     
     var new_plates = L.geoJSON(plateData, {
-        // pointToLayer: function (feature, latlng) {
-        // return L.polyline(latlng);
-        // }, 
-        // style: function(feature) {
-        //     return {
         color: "red",
         weight: 2,
-        //     };
-        // },
     }).addTo(plate_boundaries);
-
-    // plateData.forEach(feature => {
-    //     var pl_coordinates = feature.geometry.coordinates
-    //     plate_boundaries.push(pl_coordinates)
-    // });
 };
 
 console.log(plate_boundaries);
 
 function createMaps(earthquakes) {
-    
-    // var plate_bounds = L.polyline(plate_boundaries, {
-    //     color: "red",
-    // });
-    
+       
     // Define LightMap layer
     
     var lightLayerBase = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
